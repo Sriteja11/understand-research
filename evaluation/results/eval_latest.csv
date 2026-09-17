@@ -1,0 +1,16 @@
+question_id,question_type,question_text,retrieval_hit,citation_correct,grounded,refusal_correct,latency_ms,answer_preview
+Q001,answerable,What is scaled dot-product attention and how is it computed?,True,True,True,True,5981.71,User Safety: safe
+Q002,answerable,What is multi-head attention and why is it beneficial over single attention?,True,True,True,True,6144.35,"## Evidence
+
+The following facts are directly extracted from the provided document:
+
+1. **Definition of multi-head attention:** ""Multi-head attention "
+Q003,answerable,How do positional encodings work in the Transformer architecture?,True,True,True,True,10917.51,"## Evidence
+
+1. The Transformer uses **sinusoidal positional encoding** as its default positional representation: ""In row (E) we replace our sinusoida"
+Q004,answerable,What is the difference between RAG-Sequence and RAG-Token models?,True,True,True,True,15850.19,"**Evidence**
+
+- The RAG‑Sequence model “uses the same retrieved document to generate the complete sequence” and treats the retrieved document as a sin"
+Q005,answerable,Which retriever component does RAG use to access Wikipedia passages?,True,True,True,True,18073.86,"**Evidence**
+
+- The retrieval component \(p_{\eta}(z|x)\) is explicitly stated to be based on DPR (the Document Retrieval component) [Doc: RAG_2005.11"

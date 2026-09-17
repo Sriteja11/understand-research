@@ -1,0 +1,49 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# User uploaded documents
+data/uploads/*
+!data/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# Sessions, chat history, and databases
+*.db
+*.sqlite
+*.sqlite3
+data/app.db
+data/*.db
+
+# Vector store index
+data/chroma/
+
+# Python virtual environment and bytecode
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Frontend dependencies
+node_modules/
+frontend/node_modules/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+

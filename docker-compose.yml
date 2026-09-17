@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: rag-research-assistant
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=gemini
+      - LLM_MODEL=gemini-2.5-flash
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - CHROMA_PATH=/app/data/chroma
+      - SQLITE_PATH=/app/data/app.db
+      - UPLOAD_PATH=/app/data/uploads
+      - SEED_DOCS_PATH=/app/data/seed_documents
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
