@@ -30,6 +30,7 @@ The diagram above displays the end-to-end dataflow across the application:
 - **Reranker**: `cross-encoder/ms-marco-MiniLM-L-6-v2` with lexical-semantic reciprocal rank fusion fallback.
 - **LLM providers**: OpenRouter API (`openrouter/free` with automatic candidate fallbacks), Google Gemini API (`google-genai` SDK), and local Ollama (`qwen3.5:4b` or configured model).
 - **Ingestion**: PyMuPDF (`pymupdf`), standard text and markdown decoders.
+- **Speech-to-text**: Cactus Compute Whistle (`cactus-needle`, 16.9 MB CPU model) with AI domain keyword biasing and Web Audio API microphone capture.
 - **State storage**: SQLite 3 (`data/app.db`).
 - **Containerization**: Docker, Docker Compose.
 
@@ -45,10 +46,12 @@ understand-research/
 │   │   │   ├── chat.py              # POST /chat (SSE streaming) and POST /chat/sync
 │   │   │   ├── documents.py         # Upload, document list, delete, SSE status
 │   │   │   ├── sessions.py          # Session list, create, message history
+│   │   │   ├── audio.py             # POST /audio/transcribe (Whistle STT) & status
 │   │   │   └── evaluation.py        # GET /evaluation and POST /evaluation/run
 │   │   ├── schemas/                 # Pydantic request/response models
 │   │   ├── services/
 │   │   │   ├── chat_service.py      # Query validation, evidence gathering, streaming
+│   │   │   ├── audio_service.py     # Cactus Whistle STT engine & keyword biasing
 │   │   │   ├── retrieval_service.py # Vector search, reranking, threshold checks
 │   │   │   ├── indexing_service.py  # Background parsing, chunking, embedding, ChromaDB
 │   │   │   ├── document_service.py  # File validation, disk saving, SQLite records

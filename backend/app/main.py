@@ -12,6 +12,7 @@ from backend.app.api.chat import router as chat_router
 from backend.app.api.documents import router as documents_router
 from backend.app.api.sessions import router as sessions_router
 from backend.app.api.evaluation import router as evaluation_router
+from backend.app.api.audio import router as audio_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -53,13 +54,15 @@ app.include_router(chat_router)
 app.include_router(documents_router)
 app.include_router(sessions_router)
 app.include_router(evaluation_router)
+app.include_router(audio_router)
 
 @app.get("/health")
 def health_check():
     return {
         "status": "healthy",
         "provider": settings.llm_provider,
-        "embedding_model": settings.embedding_model
+        "embedding_model": settings.embedding_model,
+        "audio_model": "Whistle (16.9 MB)"
     }
 
 # Serve built frontend if available

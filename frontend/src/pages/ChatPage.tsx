@@ -20,9 +20,10 @@ import {
   Search,
   ExternalLink
 } from 'lucide-react';
-import { Message, Session, EvidenceItem } from '../types';
+import { Message, Session, EvidenceItem, AudioTranscriptionResponse } from '../types';
 import { fetchSessions, createSession, fetchSession, deleteSession } from '../api/sessions';
 import { streamChat } from '../api/chat';
+import { AudioInput } from '../components/AudioInput';
 
 const QUICK_PROMPTS = [
   "What is scaled dot-product attention and how is it computed?",
@@ -46,9 +47,19 @@ export const ChatPage: React.FC = () => {
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [audioMetadata, setAudioMetadata] = useState<AudioTranscriptionResponse | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleAudioTranscription = (text: string, metadata: AudioTranscriptionResponse) => {
+    setInputQuery((prev) => (prev.trim() ? `${prev.trim()} ${text.trim()}` : text.trim()));
+    setAudioMetadata(metadata);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.focus();
+    }
+  };
 
   useEffect(() => {
     loadSessions();
@@ -138,6 +149,7 @@ export const ChatPage: React.FC = () => {
     if (!textToSend || isStreaming) return;
 
     setInputQuery('');
+    setAudioMetadata(null);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
@@ -558,30 +570,64 @@ export const ChatPage: React.FC = () => {
         {/* Input Bar Area */}
         <div className="p-4 lg:px-8 bg-white border-t border-slate-200 shrink-0">
           <div className="max-w-4xl mx-auto">
+            {/* Audio transcription metadata pill */}
+            {audioMetadata && (
+              <div className="mb-2 flex items-center justify-between bg-indigo-50/90 border border-indigo-200/80 rounded-xl px-3 py-1.5 text-xs text-indigo-700 shadow-2xs animate-fadeIn">
+                <div className="flex items-center space-x-2">
+                  <span className="font-semibold flex items-center gap-1 text-indigo-800">
+                    🎙️ Whistle:
+                  </span>
+                  <span>
+                    Transcribed {audioMetadata.duration_s}s in {audioMetadata.ttft_ms.toFixed(1)}ms ({audioMetadata.decode_tps.toFixed(0)} tok/s)
+                  </span>
+                  {audioMetadata.language && (
+                    <span className="px-1.5 py-0.5 bg-indigo-100 rounded text-[10px] font-mono font-medium uppercase text-indigo-800">
+                      {audioMetadata.language}
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAudioMetadata(null)}
+                  className="text-indigo-400 hover:text-indigo-700 font-bold px-1"
+                  title="Dismiss audio stats"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
             <div className="relative flex items-end bg-slate-50 border border-slate-300 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200/50 rounded-2xl p-2 transition-all shadow-xs">
               <textarea
                 ref={textareaRef}
                 value={inputQuery}
                 onChange={handleTextareaInput}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask a technical question from the AI research papers (Enter to send, Shift+Enter for newline)..."
+                placeholder="Ask a technical question from the AI research papers (Enter to send, Shift+Enter for newline, or click the mic to speak)..."
                 disabled={isStreaming}
                 rows={1}
                 className="w-full bg-transparent resize-none px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none max-h-40 min-h-[40px]"
               />
-              <button
-                type="button"
-                onClick={() => handleSendMessage()}
-                disabled={isStreaming || !inputQuery.trim()}
-                className="mb-1 mr-1 p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 shadow-xs"
-                title="Send message"
-              >
-                <Send className="w-4 h-4" />
-              </button>
+
+              <div className="flex items-center mb-1 mr-1 space-x-1 shrink-0">
+                <AudioInput
+                  onTranscription={handleAudioTranscription}
+                  disabled={isStreaming}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleSendMessage()}
+                  disabled={isStreaming || !inputQuery.trim()}
+                  className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 shadow-xs"
+                  title="Send message"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             <div className="mt-2 flex items-center justify-between text-[11px] text-slate-400 px-1">
-              <span>Press Enter to send, Shift+Enter for new line</span>
+              <span>Press Enter to send · Click Mic for on-device Whistle voice input</span>
               <span>All retrieved context treated as untrusted data</span>
             </div>
           </div>

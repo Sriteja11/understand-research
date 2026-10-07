@@ -24,7 +24,7 @@ def bootstrap():
         sys.exit(subprocess.call(args))
 
     # 3. Check for core dependencies and auto-install if missing
-    required = ["uvicorn", "fastapi", "chromadb", "sentence_transformers", "pymupdf", "pydantic_settings"]
+    required = ["uvicorn", "fastapi", "chromadb", "sentence_transformers", "pymupdf", "pydantic_settings", "needle"]
     missing = []
     for pkg in required:
         try:

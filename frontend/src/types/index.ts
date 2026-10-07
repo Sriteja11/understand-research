@@ -70,3 +70,29 @@ export interface EvaluationSummary {
   results: EvaluationResult[];
 }
 
+export interface AudioWordTimestamp {
+  word: string;
+  start: number;
+  end: number;
+  probability: number;
+}
+
+export interface AudioTranscriptionResponse {
+  text: string;
+  language: string;
+  ttft_ms: number;
+  decode_tps: number;
+  duration_s: number;
+  words?: AudioWordTimestamp[] | null;
+  silence: boolean;
+}
+
+export interface AudioStatusResponse {
+  available: boolean;
+  model_name: string;
+  engine: string;
+  model_size_mb: number;
+  supported_languages: string[];
+  default_keywords_count: number;
+}
+
